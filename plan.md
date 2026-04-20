@@ -93,7 +93,7 @@ context size:
 
 | Name        | `noise_level`          | `anchor_prefix_size` | `n_frames` | `context_length` (inference) |
 |-------------|------------------------|----------------------|------------|------------------------------|
-| DF baseline | `random_all`           | —                    | 32         | 2                            |
+| DF baseline | `random_all`           | —                    | 32         | 8                            |
 | CA          | `context_amortization` | 8                    | 32         | 8                            |
 
 Rationale: DF noises every frame independently. CA clamps the first 8
@@ -102,8 +102,11 @@ loss on them. Longer `n_frames` gives CA more non-anchor positions to
 amortize loss across (the core efficiency lever), and the larger anchor
 prefix matches the blog's "long history of noise-free captured context."
 
-At inference, match `dataset.context_length` to `anchor_prefix_size` so
-the model sees the distribution it was trained on.
+Inference `context_length=8` for both: CA trained on that distribution;
+DF didn't, but giving it the same context budget at rollout isolates the
+training-recipe difference from the inference-conditioning budget. FVD
+and LPIPS should be computed over positions `>= 8` only (positions 0-7
+are ground-truth by construction).
 
 ## Evaluation (Day 3, `eval.py` to be written)
 
