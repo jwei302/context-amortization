@@ -86,25 +86,24 @@ for parallelism rent a 2×H100 instance and prefix with
 
 ## Experiment sweep (Day 2)
 
-Three configs, 100k steps each, identical hyperparameters except the
-noise-level / anchor knobs:
+Two configs, 100k steps each, identical hyperparameters except the
+noise-level / anchor knobs. Training window is `n_frames=32` for both
+(longer than upstream default of 16), so the comparison is at matched
+context size:
 
-| Name           | `n_frames` | `anchor_prefix_size` | `context_length` (inference) |
-|----------------|------------|----------------------|------------------------------|
-| DF baseline    | 16         | —                    | 2                            |
-| CA (short)     | 16         | 2                    | 2                            |
-| CA (long)      | 32         | 4                    | 4                            |
-| CA (long, big) | 32         | 8                    | 8                            |
+| Name        | `noise_level`          | `anchor_prefix_size` | `n_frames` | `context_length` (inference) |
+|-------------|------------------------|----------------------|------------|------------------------------|
+| DF baseline | `random_all`           | —                    | 32         | 2                            |
+| CA          | `context_amortization` | 8                    | 32         | 8                            |
 
-Rationale: `(n_frames=16, k=2)` is blog-faithful against DMLab defaults.
-Bumping `n_frames` gives CA more loss-contributing positions per forward
-pass (the core efficiency lever). Bumping `k` proportionally gives the
-model a longer clean history to condition on — closer to the blog's
-"long history of noise-free captured context."
+Rationale: DF noises every frame independently. CA clamps the first 8
+positions to clean anchors (at `stabilization_level - 1`) and masks the
+loss on them. Longer `n_frames` gives CA more non-anchor positions to
+amortize loss across (the core efficiency lever), and the larger anchor
+prefix matches the blog's "long history of noise-free captured context."
 
-Matching inference: set `dataset.context_length` to the same value as
-`anchor_prefix_size` so evaluation conditions on the distribution seen
-during training.
+At inference, match `dataset.context_length` to `anchor_prefix_size` so
+the model sees the distribution it was trained on.
 
 ## Evaluation (Day 3, `eval.py` to be written)
 

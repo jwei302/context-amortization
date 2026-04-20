@@ -15,10 +15,11 @@ PY=/nfs/roberts/project/pi_jks79/jw2933/rhoda/.venv/bin/python
 
 nvidia-smi | head -15 || true
 
-# DF baseline — random_all noise levels, no loss mask
+# DF baseline — random_all noise levels, no loss mask, n_frames=32
 $PY -m main "+name=train_df_baseline_100k" \
     algorithm=df_video \
     dataset=video_dmlab \
+    dataset.n_frames=32 \
     algorithm.weight_decay=1e-3 \
     algorithm.diffusion.architecture.network_size=48 \
     algorithm.diffusion.architecture.attn_dim_head=32 \
