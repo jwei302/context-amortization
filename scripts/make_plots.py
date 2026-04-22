@@ -22,9 +22,9 @@ CONFIGS = [
 HORIZONS = [32, 64, 128]
 
 LOSS_CSVS = {
-    "DF":      ROOT / "outputs/2026-04-20/09-32-55/loss.csv",
-    "CA k=8":  ROOT / "outputs/2026-04-20/20-48-57/loss.csv",
-    "CA k=4":  ROOT / "outputs/2026-04-21/16-06-17/loss.csv",
+    "DF":      ROOT / "artifacts/df/loss.csv",
+    "CA k=8":  ROOT / "artifacts/ca_k8/loss.csv",
+    "CA k=4":  ROOT / "artifacts/ca_k4/loss.csv",
 }
 LOSS_COLORS = {"DF": "tab:red", "CA k=8": "tab:blue", "CA k=4": "tab:orange"}
 

@@ -1,0 +1,128 @@
+experiment:
+  debug: ${debug}
+  tasks:
+  - training
+  num_nodes: 1
+  training:
+    precision: 16-mixed
+    compile: false
+    lr: 8.0e-05
+    batch_size: 8
+    max_epochs: -1
+    max_steps: 100005
+    max_time: null
+    data:
+      num_workers: 8
+      shuffle: true
+    optim:
+      accumulate_grad_batches: 1
+      gradient_clip_val: 1.0
+    checkpointing:
+      every_n_train_steps: 10000
+      every_n_epochs: null
+      train_time_interval: null
+      enable_version_counter: false
+  validation:
+    precision: 16-mixed
+    compile: false
+    batch_size: 8
+    val_every_n_step: 5000
+    val_every_n_epoch: null
+    limit_batch: 1
+    inference_mode: true
+    data:
+      num_workers: 16
+      shuffle: false
+  test:
+    precision: 16-mixed
+    compile: false
+    batch_size: 8
+    limit_batch: 1
+    data:
+      num_workers: 16
+      shuffle: false
+  logging:
+    metrics:
+    - fvd
+dataset:
+  debug: ${debug}
+  metadata: data/${dataset.name}/metadata.json
+  data_mean: 0.5
+  data_std: 0.5
+  save_dir: data/dmlab
+  n_frames: 32
+  context_length: 4
+  resolution: 64
+  observation_shape:
+  - 3
+  - ${dataset.resolution}
+  - ${dataset.resolution}
+  external_cond_dim: 0
+  validation_multiplier: 1
+  frame_skip: 2
+algorithm:
+  debug: ${debug}
+  lr: ${experiment.training.lr}
+  x_shape: ${dataset.observation_shape}
+  frame_stack: 1
+  frame_skip: ${dataset.frame_skip}
+  data_mean: ${dataset.data_mean}
+  data_std: ${dataset.data_std}
+  external_cond_dim: 0
+  context_frames: ${dataset.context_length}
+  weight_decay: 0.001
+  warmup_steps: 10000
+  optimizer_beta:
+  - 0.9
+  - 0.99
+  uncertainty_scale: 1
+  guidance_scale: 0.0
+  chunk_size: 1
+  scheduling_matrix: autoregressive
+  noise_level: context_amortization
+  anchor_prefix_size: 4
+  causal: true
+  diffusion:
+    objective: pred_v
+    beta_schedule: cosine
+    schedule_fn_kwargs: {}
+    clip_noise: 6.0
+    use_snr: false
+    use_cum_snr: false
+    use_fused_snr: true
+    snr_clip: 5.0
+    cum_snr_decay: 0.96
+    timesteps: 1000
+    sampling_timesteps: 100
+    ddim_sampling_eta: 0.0
+    stabilization_level: 15
+    architecture:
+      network_size: 48
+      attn_heads: 4
+      attn_dim_head: 32
+      dim_mults:
+      - 1
+      - 2
+      - 4
+      - 8
+      resolution: ${dataset.resolution}
+      attn_resolutions:
+      - 8
+      - 16
+      - 32
+      - 64
+      use_init_temporal_attn: true
+      use_linear_attn: true
+      time_emb_type: rotary
+  n_frames: ${dataset.n_frames}
+  metadata: ${dataset.metadata}
+  metrics:
+  - fvd
+debug: false
+wandb:
+  entity: jeffrey-wei-yale
+  project: diffusion-forcing
+  mode: offline
+resume: null
+load: null
+name: train_ca_k4_n32_100k
