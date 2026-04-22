@@ -1,0 +1,14 @@
+{
+  "ckpt": "outputs/2026-04-20/09-32-55/checkpoints/epoch=0-step=100000.ckpt",
+  "horizon": 32,
+  "n_contexts": 16,
+  "context_length": 8,
+  "anchor_prefix_size": 1,
+  "noise_level": "random_all",
+  "fvd": 1500.2823998650897,
+  "mse": 0.35158324241638184,
+  "psnr": 10.560317993164062,
+  "ssim": 0.15917590260505676,
+  "uiqi": 0.0393078550696373,
+  "lpips": 0.4375351071357727
+}

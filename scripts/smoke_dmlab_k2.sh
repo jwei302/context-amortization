@@ -10,8 +10,10 @@
 
 set -euo pipefail
 
-cd /nfs/roberts/project/pi_jks79/jw2933/rhoda
-PY=/nfs/roberts/project/pi_jks79/jw2933/rhoda/.venv/bin/python
+REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+cd "$REPO_ROOT"
+PY="$REPO_ROOT/.venv/bin/python"
+export PYTHONPATH="$REPO_ROOT"
 
 nvidia-smi | head -15 || true
 
